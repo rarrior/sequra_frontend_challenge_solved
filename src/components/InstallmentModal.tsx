@@ -8,11 +8,8 @@ import {
   InfoCardText, DisclaimerBox, DisclaimerText
  } from './InstallmentModal.styled';
 
-interface InstallmentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedOption: InstallmentOption | null;
-}
+import type { InstallmentModalProps } from '../types';
+
 
 export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onClose, selectedOption }) => {
   useEffect(() => {

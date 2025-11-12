@@ -2,7 +2,24 @@
 // TYPES
 // ============================================================================
 
-interface InstallmentOption {
+export interface InstallmentWidgetProps {
+  apiBaseUrl: string;
+  priceSelector?: string;
+  onLoad?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface WidgetConfig extends InstallmentWidgetProps {
+  containerId?: string;
+}
+
+export interface InstallmentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedOption: InstallmentOption | null;
+}
+
+export interface InstallmentOption {
   instalment_count: number;
   apr: { value: number; string: string };
   total_with_tax: { value: number; string: string };
@@ -15,15 +32,7 @@ interface InstallmentOption {
   instalment_total: { value: number; string: string };
 }
 
-interface WidgetConfig {
-  apiBaseUrl: string;
-  priceSelector?: string;
-  containerId?: string;
-  onLoad?: () => void;
-  onError?: (error: Error) => void;
-}
-
-interface EventPayload {
+export interface EventPayload {
   context: string;
   type: string;
   [key: string]: any;

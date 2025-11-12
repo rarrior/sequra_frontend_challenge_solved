@@ -12,22 +12,15 @@ import {
   HeaderRow, WidgetTitle, WidgetSubtitle, MoreInfoButton
 } from './InstallmentWidget.styled';
 
-interface InstallmentWidgetProps {
-  apiBaseUrl: string;
-  priceSelector?: string;
-  initialPrice?: number;
-  onLoad?: () => void;
-  onError?: (error: Error) => void;
-}
+import type { InstallmentWidgetProps, InstallmentOption } from '../types';
 
 const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
   apiBaseUrl,
   priceSelector,
-  initialPrice,
   onLoad,
   onError,
 }) => {
-  const [price, setPrice] = useState<number>(initialPrice || 0);
+  const [price, setPrice] = useState<number>(0);
   const [installments, setInstallments] = useState<InstallmentOption[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,7 +40,14 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
   }, []);
 
   const fetchInstallments = useCallback(async (priceInCents: number) => {
-    if (priceInCents <= 0) return;
+    if (priceInCents <= 0) {
+      console.log('⚠️ Invalid price for fetching installments:', priceInCents);
+      const error = new Error('Precio inválido para calcular las cuotas');
+      setError(error.message);
+      onError?.(error);
+      trackEvent('widgetError', { error: error.message });
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -77,7 +77,13 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
     const cleanText = text.replace(/[€$\s]/g, '').replace(',', '.');
     const priceValue = parseFloat(cleanText);
     
-    if (isNaN(priceValue)) {
+    if (isNaN(priceValue) || priceValue <= 0) {
+      console.log('⚠️ Invalid price:', priceValue);
+      const error = new Error('Precio inválido para calcular las cuotas');
+      setError(error.message);
+      setIsLoading(false);
+      onError?.(error);
+      trackEvent('widgetError', { error: error.message });
       return 0;
     }
     return Math.round(priceValue * 100);
@@ -85,6 +91,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
 
   useEffect(() => {
     if (!priceSelector) {
+      console.warn(`Price selector "${priceSelector}" not found`);
       return;
     }
 
@@ -93,6 +100,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
       console.warn(`Price selector "${priceSelector}" not found`);
       return;
     }
+    console.log(`✅ Price element found for selector "${priceSelector}":`, priceElement);
 
     const initialPriceValue = parsePriceFromElement(priceElement);
     setPrice(initialPriceValue);

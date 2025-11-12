@@ -2,14 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import InstallmentWidget from './components/InstallmentWidget';
 
-interface WidgetConfig {
-  containerId?: string;
-  priceSelector?: string;
-  apiBaseUrl: string;
-  initialPrice?: number;
-  onLoad?: () => void;
-  onError?: (error: Error) => void;
-}
+const WidgetConfig = require('./types').WidgetConfig;
 
 const SeQuraWidget = {
   render(config: WidgetConfig): void {
