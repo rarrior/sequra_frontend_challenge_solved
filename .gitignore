@@ -8,6 +8,10 @@ dist/
 build/
 *.tgz
 
+# Storybook
+storybook-static/
+*storybook.log
+
 # Testing
 coverage/
 .nyc_output/
