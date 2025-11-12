@@ -1,3 +1,4 @@
+import type { EventPayload } from '../types';
 export class EventsService {
   constructor(private baseUrl: string) {}
 

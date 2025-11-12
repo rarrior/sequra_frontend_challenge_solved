@@ -1,3 +1,4 @@
+import type { InstallmentOption } from '../types';
 export class CreditAgreementService {
   constructor(private baseUrl: string) {}
 

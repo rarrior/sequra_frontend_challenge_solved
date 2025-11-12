@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import InstallmentWidget from './components/InstallmentWidget';
 
-const WidgetConfig = require('./types').WidgetConfig;
+import type { WidgetConfig } from './types';
 
 const SeQuraWidget = {
   render(config: WidgetConfig): void {
