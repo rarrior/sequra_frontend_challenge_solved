@@ -1,15 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import InstallmentWidget from './components/InstallmentWidget';
+import { createRoot, type Root } from 'react-dom/client';
 
 import type { WidgetConfig } from './types';
 
 const SeQuraWidget = {
+  root: null as Root | null,
+
   render(config: WidgetConfig): void {
     console.log('🎯 SeQuraWidget.render() called');
     
     const containerId = config.containerId || 'sequra-installments';
     const container = document.getElementById(containerId);
+    this.root = createRoot(container!);
     
     if (!container) {
       console.error(`❌ Container "${containerId}" not found`);
@@ -23,11 +26,10 @@ const SeQuraWidget = {
     }
 
     try {
-      ReactDOM.render(
+      this.root.render(
         <React.StrictMode>
           <InstallmentWidget {...config} />
-        </React.StrictMode>,
-        container
+        </React.StrictMode>
       );
       console.log('✅ Widget rendered successfully');
     } catch (error) {
@@ -39,10 +41,9 @@ const SeQuraWidget = {
     }
   },
 
-  destroy(containerId = 'sequra-installments'): void {
-    const container = document.getElementById(containerId);
-    if (container) {
-      ReactDOM.unmountComponentAtNode(container);
+  destroy(): void {
+    if (this.root) {
+      this.root.unmount();
     }
   },
 
