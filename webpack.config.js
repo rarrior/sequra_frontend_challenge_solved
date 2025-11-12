@@ -27,7 +27,13 @@ module.exports = (env, argv) => {
         {
           test: /\.(ts|tsx)$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [
+            /node_modules/,
+            /stories/,    // Exclude Storybook stories
+            /\.stories\.tsx?$/, // Exclude Storybook stories
+            /\.test\.tsx?$/,    // Exclude test files
+            /\.spec\.tsx?$/,    // Exclude spec files
+          ],
         },
         {
           test: /\.css$/,
