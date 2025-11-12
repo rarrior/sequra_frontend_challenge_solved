@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
-import InstallmentWidget from '../components/InstallmentWidget';
+import InstallmentWidget from '../src/components/InstallmentWidget';
 import { http, HttpResponse } from 'msw'
 
 // Helper function to generate installments for different prices

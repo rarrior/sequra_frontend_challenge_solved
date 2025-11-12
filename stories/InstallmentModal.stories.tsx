@@ -2,8 +2,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { fn } from 'storybook/test';
 import { useState } from 'react';
-import { InstallmentModal } from '../components/InstallmentModal';
-import type { InstallmentOption } from '../types';
+import { InstallmentModal } from '../src/components/InstallmentModal';
+import type { InstallmentOption } from '../src/types';
 
 // Mock installment options for different scenarios
 const mockInstallment3Months: InstallmentOption = {
@@ -202,7 +202,8 @@ export const HighPrice: Story = {
 
 export const Interactive: Story = {
   args: {
-    isOpen: true
+    isOpen: true,
+    selectedOption: mockInstallment6Months,
   },
 
   render: (args) => (
