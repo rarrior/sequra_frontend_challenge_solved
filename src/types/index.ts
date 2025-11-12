@@ -2,6 +2,7 @@
 // TYPES
 // ============================================================================
 
+// Components Props
 export interface InstallmentWidgetProps {
   apiBaseUrl: string;
   priceSelector?: string;
@@ -19,6 +20,7 @@ export interface InstallmentModalProps {
   selectedOption: InstallmentOption | null;
 }
 
+// Data Structures
 export interface InstallmentOption {
   instalment_count: number;
   apr: { value: number; string: string };
