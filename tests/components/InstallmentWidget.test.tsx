@@ -4,6 +4,7 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import InstallmentWidget from '../../src/components/InstallmentWidget';
+import { setTestLanguage } from '../setupTests';
 
 import { mockInstallments, generateInstallments } from '../../__mocks__/InstallmentsMock';
 
@@ -29,7 +30,7 @@ const setupFetchMock = (installments = mockInstallments) => {
 const installmentWidgetWrapper = (price: number | null = null, onLoad?: () => void, onError?: () => void) => (
   <div>
     <div>
-      <div style={{ flex: '1 0 auto' }}>Precio:</div> 
+      <div style={{ flex: '1 0 auto' }}>Precio:</div>
       <div id="demo-price">{price !== null ? (price / 100).toFixed(2) + ' €' : 'N/A'}</div>
     </div>
     <InstallmentWidget
@@ -49,7 +50,7 @@ describe('InstallmentWidget', () => {
 
   describe('Initial Render and Loading', () => {
     it('should render loading state initially', () => {
-      (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+      (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => { }));
 
       render(installmentWidgetWrapper(39999));
 
@@ -220,7 +221,7 @@ describe('InstallmentWidget', () => {
 
   describe('Modal Functionality', () => {
     it('should open modal when "Más info" button is clicked', async () => {
-     render(installmentWidgetWrapper(39999));
+      render(installmentWidgetWrapper(39999));
 
       await waitFor(() => {
         expect(screen.getByText('Más info')).toBeInTheDocument();
@@ -292,7 +293,7 @@ describe('InstallmentWidget', () => {
       await waitFor(() => {
         const modal = screen.getByRole('dialog');
         expect(modal).toBeInTheDocument();
-        
+
         expect(within(modal).getByText('seQura')).toBeInTheDocument();
         expect(within(modal).getByText('Fracciona tu pago')).toBeInTheDocument();
         expect(within(modal).getByText(/Fracciona tu pago solo con un coste fijo por cuota/)).toBeInTheDocument();
@@ -384,12 +385,120 @@ describe('InstallmentWidget', () => {
       });
 
       const select = screen.getByRole('combobox');
-      
+
       // Focus and use keyboard
       await user.click(select);
       await user.keyboard('{ArrowDown}');
-      
+
       expect(select).toHaveFocus();
+    });
+  });
+
+  describe('Internationalization (i18n)', () => {
+
+    describe('English Language', () => {
+      beforeEach(async () => {
+        await setTestLanguage('en');
+      });
+
+      it('should display widget in English', async () => {
+        render(installmentWidgetWrapper(39999));
+
+        await waitFor(() => {
+          expect(screen.getByText('Pay in')).toBeInTheDocument();
+        });
+        expect(screen.getByText('Split your payment')).toBeInTheDocument();
+        expect(screen.getByText('More info')).toBeInTheDocument();
+      });
+
+      it('should display dropdown options in English', async () => {
+        render(installmentWidgetWrapper(39999));
+
+        await waitFor(() => {
+          expect(screen.getByText('Pay in')).toBeInTheDocument();
+        });
+        const select = screen.getByRole('combobox');
+        expect(select).toHaveAccessibleName(/Select the number of installments/i);
+        expect(screen.getByText('3 installments of 136,33 €')).toBeInTheDocument();
+      });
+
+      it('should display error messages in English', async () => {
+        render(installmentWidgetWrapper(0));
+
+        await waitFor(() => {
+          expect(screen.getByText('Invalid price to calculate installments')).toBeInTheDocument();
+        });
+      });
+
+      it('should display modal in English', async () => {
+        render(installmentWidgetWrapper(39999));
+
+        await waitFor(() => {
+          expect(screen.getByText('More info')).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText('More info'));
+
+        await waitFor(() => {
+          const modal = screen.getByRole('dialog');
+          expect(modal).toBeInTheDocument();
+          expect(within(modal).getByText('Split your payment')).toBeInTheDocument();
+          expect(within(modal).getByText(/Split your payment with just a fixed cost per installment/)).toBeInTheDocument();
+          expect(within(modal).getByText(/Now you only pay the first installment/)).toBeInTheDocument();
+          expect(within(modal).getByText('Got it')).toBeInTheDocument();
+        });
+      });
+
+      it('should have proper ARIA label in English on close button', async () => {
+        render(installmentWidgetWrapper(39999));
+
+        await waitFor(() => {
+          expect(screen.getByText('More info')).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText('More info'));
+
+        await waitFor(() => {
+          const closeButton = screen.getByLabelText('Close');
+          expect(closeButton).toBeInTheDocument();
+        });
+      });
+    });
+
+    describe('Language Switching', () => {
+      it('should switch from Spanish to English', async () => {
+        render(installmentWidgetWrapper(39999));
+        // Initially in Spanish
+        await waitFor(() => {
+          expect(screen.getByText('Págalo en')).toBeInTheDocument();
+        });
+
+        // Switch to English
+        await setTestLanguage('en');
+        // Should now be in English
+        await waitFor(() => {
+          expect(screen.queryByText('Págalo en')).not.toBeInTheDocument();
+          expect(screen.getByText('Pay in')).toBeInTheDocument();
+        });
+      });
+
+      it('should switch from English to Spanish', async () => {
+        await setTestLanguage('en');
+        render(installmentWidgetWrapper(39999));
+
+        // Initially in English
+        await waitFor(() => {
+          expect(screen.getByText('Pay in')).toBeInTheDocument();
+        });
+
+        // Switch to Spanish
+        await setTestLanguage('es');
+        // Should now be in Spanish
+        await waitFor(() => {
+          expect(screen.queryByText('Pay in')).not.toBeInTheDocument();
+          expect(screen.getByText('Págalo en')).toBeInTheDocument();
+        });
+      });
     });
   });
 
