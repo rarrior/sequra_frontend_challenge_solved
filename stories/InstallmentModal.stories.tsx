@@ -5,58 +5,12 @@ import { useState } from 'react';
 import { InstallmentModal } from '../src/components/InstallmentModal';
 import type { InstallmentOption } from '../src/types';
 
-// Mock installment options for different scenarios
-const mockInstallment3Months: InstallmentOption = {
-  instalment_count: 3,
-  apr: { value: 10408, string: '104,08 %' },
-  total_with_tax: { value: 39999, string: '399,99 €' },
-  cost_of_credit: { value: 900, string: '9,00 €' },
-  cost_of_credit_pct: { value: 600, string: '6,00 %' },
-  grand_total: { value: 40899, string: '408,99 €' },
-  max_financed_amount: { value: 200000, string: '2.000,00 €' },
-  instalment_amount: { value: 13333, string: '133,33 €' },
-  instalment_fee: { value: 300, string: '3,00 €' },
-  instalment_total: { value: 13633, string: '136,33 €' },
-};
-
-const mockInstallment6Months: InstallmentOption = {
-  instalment_count: 6,
-  apr: { value: 10408, string: '104,08 %' },
-  total_with_tax: { value: 39999, string: '399,99 €' },
-  cost_of_credit: { value: 1800, string: '18,00 €' },
-  cost_of_credit_pct: { value: 450, string: '4,50 %' },
-  grand_total: { value: 41799, string: '417,99 €' },
-  max_financed_amount: { value: 200000, string: '2.000,00 €' },
-  instalment_amount: { value: 6666, string: '66,66 €' },
-  instalment_fee: { value: 300, string: '3,00 €' },
-  instalment_total: { value: 6966, string: '69,66 €' },
-};
-
-const mockInstallment12Months: InstallmentOption = {
-  instalment_count: 12,
-  apr: { value: 10408, string: '104,08 %' },
-  total_with_tax: { value: 39999, string: '399,99 €' },
-  cost_of_credit: { value: 3600, string: '36,00 €' },
-  cost_of_credit_pct: { value: 900, string: '9,00 %' },
-  grand_total: { value: 43599, string: '435,99 €' },
-  max_financed_amount: { value: 200000, string: '2.000,00 €' },
-  instalment_amount: { value: 3333, string: '33,33 €' },
-  instalment_fee: { value: 300, string: '3,00 €' },
-  instalment_total: { value: 3633, string: '36,33 €' },
-};
-
-const mockHighPriceInstallment: InstallmentOption = {
-  instalment_count: 12,
-  apr: { value: 10408, string: '104,08 %' },
-  total_with_tax: { value: 199999, string: '1.999,99 €' },
-  cost_of_credit: { value: 3600, string: '36,00 €' },
-  cost_of_credit_pct: { value: 180, string: '1,80 %' },
-  grand_total: { value: 203599, string: '2.035,99 €' },
-  max_financed_amount: { value: 200000, string: '2.000,00 €' },
-  instalment_amount: { value: 16666, string: '166,66 €' },
-  instalment_fee: { value: 300, string: '3,00 €' },
-  instalment_total: { value: 16966, string: '169,66 €' },
-};
+import {
+  mockInstallment3Months,
+  mockInstallment6Months,
+  mockInstallment12Months,
+  mockHighPriceInstallment,
+} from '../__mocks__/InstallmentsMock';
 
 // Wrapper component to handle modal state
 const ModalWrapper: React.FC<{

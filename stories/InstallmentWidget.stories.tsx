@@ -1,46 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import InstallmentWidget from '../src/components/InstallmentWidget';
-import { http, HttpResponse } from 'msw'
-
-// Helper function to generate installments for different prices
-const generateInstallments = (priceInCents: number) => {
-  return [3, 6, 12].map(months => {
-    const fee = 300; // 3€ per installment
-    const costOfCredit = fee * months;
-    const grandTotal = priceInCents + costOfCredit;
-    const instalmentAmount = Math.round(priceInCents / months);
-    const instalmentTotal = instalmentAmount + fee;
-
-    return {
-      instalment_count: months,
-      apr: { value: 10408, string: '104,08 %' },
-      total_with_tax: {
-        value: priceInCents,
-        string: `${(priceInCents / 100).toFixed(2).replace('.', ',')} €`
-      },
-      cost_of_credit: {
-        value: costOfCredit,
-        string: `${(costOfCredit / 100).toFixed(2).replace('.', ',')} €`
-      },
-      cost_of_credit_pct: { value: 600, string: '6,00 %' },
-      grand_total: {
-        value: grandTotal,
-        string: `${(grandTotal / 100).toFixed(2).replace('.', ',')} €`
-      },
-      max_financed_amount: { value: 200000, string: '2.000,00 €' },
-      instalment_amount: {
-        value: instalmentAmount,
-        string: `${(instalmentAmount / 100).toFixed(2).replace('.', ',')} €`
-      },
-      instalment_fee: { value: fee, string: '3,00 €' },
-      instalment_total: {
-        value: instalmentTotal,
-        string: `${(instalmentTotal / 100).toFixed(2).replace('.', ',')} €`
-      },
-    };
-  });
-};
+import { http, HttpResponse } from 'msw';
+import { generateInstallments } from '../__mocks__/InstallmentsMock';
 
 const meta: Meta<typeof InstallmentWidget> = {
   title: 'seQura/InstallmentWidget',
@@ -289,6 +251,40 @@ export const WithPriceObserver: Story = {
     docs: {
       description: {
         story: 'Widget that automatically updates when the observed price element changes. Click the price buttons to see it in action.',
+      },
+    },
+  },
+};
+
+// Price value without decimals
+export const PriceWithoutDecimals: Story = {
+  args: {
+    apiBaseUrl: 'http://localhost:8080',
+    priceSelector: '#demo-price',
+  },
+  decorators: [
+    (Story) => {
+      return (
+        <div>
+          <div style={{ marginBottom: '10px', padding: '15px', background: '#eef6ffff', borderRadius: '8px', 
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
+            <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px', display: 'flex', gap: '10px' }}>
+              <div style={{ flex: '1 0 auto' }}>Precio:</div> 
+              <div id="demo-price" style={{ color: '#00306fff'}}>2000 €</div>
+            </div>
+          </div>
+          <div style={{ width: '400px' }}>
+            <Story />
+          </div>
+        </div>
+      );
+    },
+  ],
+  parameters: {
+    skipParentDecorator: true, // Custom parameter to skip parent decorator
+    docs: {
+      description: {
+        story: 'Widget that shows a price without decimals.',
       },
     },
   },
