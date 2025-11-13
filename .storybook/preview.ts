@@ -13,6 +13,13 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        method: 'alphabetical',
+        order: ['seQura', ['InstallmentWidget', ['Default', '*'], 'InstallmentModal']],
+        locales: 'en-US',
+      }
+    },
     backgrounds: {
       default: 'light',
       values: [

@@ -43,7 +43,7 @@ const generateInstallments = (priceInCents: number) => {
 };
 
 const meta: Meta<typeof InstallmentWidget> = {
-  title: 'seQura/components/InstallmentWidget',
+  title: 'seQura/InstallmentWidget',
   component: InstallmentWidget,
   parameters: {
     layout: 'centered',

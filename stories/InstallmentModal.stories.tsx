@@ -102,7 +102,7 @@ const ModalWrapper: React.FC<{
 };
 
 const meta = {
-  title: 'seQura/components/InstallmentModal',
+  title: 'seQura/InstallmentModal',
   component: InstallmentModal,
   parameters: {
     layout: 'centered',
