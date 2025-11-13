@@ -1,0 +1,391 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { InstallmentModal } from '../../src/components/InstallmentModal';
+import type { InstallmentOption } from '../../src/types';
+
+const mockInstallmentOption: InstallmentOption = {
+  instalment_count: 6,
+  apr: { value: 10408, string: '104,08 %' },
+  total_with_tax: { value: 39999, string: '399,99 €' },
+  cost_of_credit: { value: 1800, string: '18,00 €' },
+  cost_of_credit_pct: { value: 450, string: '4,50 %' },
+  grand_total: { value: 41799, string: '417,99 €' },
+  max_financed_amount: { value: 200000, string: '2.000,00 €' },
+  instalment_amount: { value: 6666, string: '66,66 €' },
+  instalment_fee: { value: 300, string: '3,00 €' },
+  instalment_total: { value: 6966, string: '69,66 €' },
+};
+
+describe('InstallmentModal', () => {
+  const mockOnClose = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Rendering', () => {
+    it('should not render when isOpen is false', () => {
+      const { container } = render(
+        <InstallmentModal
+          isOpen={false}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('should not render when selectedOption is null', () => {
+      const { container } = render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={null}
+        />
+      );
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('should render modal when isOpen is true and selectedOption is provided', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText('seQura - Fracciona tu pago')).toBeInTheDocument();
+    });
+
+    it('should display correct installment count in subtitle', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(
+        screen.getByText(/Información detallada del plan de 6 cuotas/)
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Content Display', () => {
+    it('should display all info cards', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(
+        screen.getByText(/Fracciona tu pago solo con un coste fijo por cuota/)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Ahora solo pagas la primera cuota/)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/El resto de pagos se cargarán automáticamente/)
+      ).toBeInTheDocument();
+    });
+
+    it('should display correct fee information', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText(/Coste por cuota:/)).toBeInTheDocument();
+      expect(screen.getByText('3,00 €')).toBeInTheDocument();
+    });
+
+    it('should display correct first installment amount', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText(/Primera cuota:/)).toBeInTheDocument();
+      expect(screen.getByText('69,66 €')).toBeInTheDocument();
+    });
+
+    it('should display correct remaining installments count', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText(/5 cuotas restantes de/)).toBeInTheDocument();
+    });
+
+    it('should display price breakdown', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText('Importe del producto:')).toBeInTheDocument();
+      expect(screen.getByText('399,99 €')).toBeInTheDocument();
+      expect(screen.getByText('Coste del crédito:')).toBeInTheDocument();
+      expect(screen.getByText('18,00 €')).toBeInTheDocument();
+      expect(screen.getByText('Total a pagar:')).toBeInTheDocument();
+      expect(screen.getByText('417,99 €')).toBeInTheDocument();
+    });
+
+    it('should display APR information', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(screen.getByText(/TAE:/)).toBeInTheDocument();
+      expect(screen.getByText('104,08 %')).toBeInTheDocument();
+    });
+
+    it('should display disclaimer text', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(
+        screen.getByText(/Además en el importe mostrado ya se incluye/)
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Close Interactions', () => {
+    it('should call onClose when close button is clicked', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const closeButton = screen.getByLabelText('Cerrar');
+      fireEvent.click(closeButton);
+
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onClose when "Entendido" button is clicked', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const entendidoButton = screen.getByText('Entendido');
+      fireEvent.click(entendidoButton);
+
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onClose when overlay is clicked', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const overlay = screen.getByText('seQura - Fracciona tu pago').closest('div')?.parentElement;
+      if (overlay) {
+        fireEvent.click(overlay);
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it('should not call onClose when modal content is clicked', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const modalContent = screen.getByText('seQura - Fracciona tu pago').closest('div');
+      if (modalContent) {
+        fireEvent.click(modalContent);
+        expect(mockOnClose).not.toHaveBeenCalled();
+      }
+    });
+
+    it('should call onClose when Escape key is pressed', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not call onClose when other keys are pressed', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      fireEvent.keyDown(document, { key: 'Enter', code: 'Enter' });
+
+      expect(mockOnClose).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Body Scroll Management', () => {
+    it('should set body overflow to hidden when modal opens', () => {
+      const { rerender } = render(
+        <InstallmentModal
+          isOpen={false}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(document.body.style.overflow).toBe('');
+
+      rerender(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(document.body.style.overflow).toBe('hidden');
+    });
+
+    it('should reset body overflow when modal closes', () => {
+      const { rerender, unmount } = render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(document.body.style.overflow).toBe('hidden');
+
+      rerender(
+        <InstallmentModal
+          isOpen={false}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      expect(document.body.style.overflow).toBe('unset');
+
+      unmount();
+      expect(document.body.style.overflow).toBe('unset');
+    });
+  });
+
+  describe('Different Installment Plans', () => {
+    it('should display 3-month plan correctly', () => {
+      const threeMonthOption: InstallmentOption = {
+        ...mockInstallmentOption,
+        instalment_count: 3,
+        instalment_total: { value: 13633, string: '136,33 €' },
+      };
+
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={threeMonthOption}
+        />
+      );
+
+      expect(screen.getByText(/plan de 3 cuotas/)).toBeInTheDocument();
+      expect(screen.getByText(/2 cuotas restantes/)).toBeInTheDocument();
+    });
+
+    it('should display 12-month plan correctly', () => {
+      const twelveMonthOption: InstallmentOption = {
+        ...mockInstallmentOption,
+        instalment_count: 12,
+        instalment_total: { value: 3633, string: '36,33 €' },
+      };
+
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={twelveMonthOption}
+        />
+      );
+
+      expect(screen.getByText(/plan de 12 cuotas/)).toBeInTheDocument();
+      expect(screen.getByText(/11 cuotas restantes/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should have proper ARIA label on close button', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const closeButton = screen.getByLabelText('Cerrar');
+      expect(closeButton).toBeInTheDocument();
+    });
+
+    it('should have proper heading hierarchy', () => {
+      render(
+        <InstallmentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          selectedOption={mockInstallmentOption}
+        />
+      );
+
+      const heading = screen.getByRole('heading', { name: /seQura - Fracciona tu pago/ });
+      expect(heading).toBeInTheDocument();
+    });
+  });
+});

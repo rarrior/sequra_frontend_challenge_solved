@@ -93,7 +93,7 @@ const meta: Meta<typeof InstallmentWidget> = {
             fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
             <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px', display: 'flex', gap: '10px' }}>
               <div style={{ flex: '1 0 auto' }}>Precio:</div> 
-              <div id="demo-price" style={{ color: '#00306fff'}}>{price && !isNaN(price) ? (price / 100).toFixed(2).replace('.', ',') + ' €' : 'N/A'}</div>
+              <div id="demo-price" style={{ color: '#00306fff'}}>{(price || price ===0) && !isNaN(price) ? (price / 100).toFixed(2).replace('.', ',') + ' €' : price}</div>
             </div>
           </div>
           <div style={{ width: '400px' }}>
@@ -179,7 +179,7 @@ export const HighPrice: Story = {
   },
 };
 
-// With negative price error
+// Negative price error
 export const NegativeValuePriceError: Story = {
   args: {
     apiBaseUrl: 'http://localhost:8080',
@@ -197,7 +197,25 @@ export const NegativeValuePriceError: Story = {
   },
 };
 
-// With negative price error
+// Zero price error
+export const ZeroValuePriceError: Story = {
+  args: {
+    apiBaseUrl: 'http://localhost:8080',
+    priceSelector: '#demo-price',
+    onLoad: () => console.log('✅ Widget loaded!'),
+    onError: (error) => console.error('❌ Widget error:', error),
+  },
+  parameters: {
+    price: 0,
+    docs: {
+      description: {
+        story: 'Widget with an invalid zero price to demonstrate error handling.',
+      },
+    },
+  },
+};
+
+// Invalid price error
 export const InvalidValuePriceError: Story = {
   args: {
     apiBaseUrl: 'http://localhost:8080',
@@ -206,10 +224,10 @@ export const InvalidValuePriceError: Story = {
     onError: (error) => console.error('❌ Widget error:', error),
   },
   parameters: {
-    price: 'test',
+    price: 'invalid-price',
     docs: {
       description: {
-        story: 'Widget with an invalid negative price to demonstrate error handling.',
+        story: 'Widget with an invalid price to demonstrate error handling.',
       },
     },
   },
