@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
@@ -46,13 +47,13 @@ module.exports = (env, argv) => {
       // Copy merchant's existing files to dist
       new CopyWebpackPlugin({
         patterns: [
-          { 
-            from: 'merchant-site/main.css', 
-            to: 'main.css' 
+          {
+            from: 'merchant-site/main.css',
+            to: 'main.css'
           },
-          { 
-            from: 'merchant-site/main.js', 
-            to: 'main.js' 
+          {
+            from: 'merchant-site/main.js',
+            to: 'main.js'
           },
         ],
       }),
@@ -82,6 +83,15 @@ module.exports = (env, argv) => {
     optimization: {
       minimize: isProduction,
       usedExports: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true, // Remove all console.* calls
+            },
+          },
+        }),
+      ],
     },
     performance: {
       hints: isProduction ? 'warning' : false,
