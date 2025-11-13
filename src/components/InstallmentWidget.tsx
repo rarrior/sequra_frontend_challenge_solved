@@ -41,7 +41,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
 
   const fetchInstallments = useCallback(async (priceInCents: number) => {
     if (priceInCents <= 0) {
-      console.log('⚠️ Invalid price for fetching installments:', priceInCents);
+      console.warn('⚠️ Invalid price for fetching installments:', priceInCents);
       const error = new Error('Precio inválido para calcular las cuotas');
       setError(error.message);
       onError?.(error);
@@ -78,7 +78,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
     const priceValue = parseFloat(cleanText);
     
     if (isNaN(priceValue) || priceValue <= 0) {
-      console.log('⚠️ Invalid price:', priceValue);
+      console.warn('⚠️ Invalid price:', priceValue);
       const error = new Error('Precio inválido para calcular las cuotas');
       setError(error.message);
       setIsLoading(false);
@@ -100,7 +100,6 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
       console.warn(`Price selector "${priceSelector}" not found`);
       return;
     }
-    console.log(`✅ Price element found for selector "${priceSelector}":`, priceElement);
 
     const initialPriceValue = parsePriceFromElement(priceElement);
     setPrice(initialPriceValue);
