@@ -38,7 +38,7 @@ export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onCl
   if (!isOpen || !selectedOption) return null;
 
   return (
-    <ModalOverlay onClick={onClose}>
+    <ModalOverlay role="dialog" onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose} aria-label="Cerrar">
           <X size={24} />
