@@ -9,6 +9,10 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/index.tsx',
   ],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '\\.styled\\.ts$'
+  ],
   coverageThreshold: {
     global: {
       branches: 70,
