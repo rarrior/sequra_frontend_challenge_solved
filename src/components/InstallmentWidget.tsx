@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InstallmentModal } from './InstallmentModal';
 import { CreditAgreementService } from '../services/CreditAgreementService';
 import { EventsService } from '../services/EventsService';
@@ -20,13 +21,14 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
   onLoad,
   onError,
 }) => {
+  const { t } = useTranslation();
   const [price, setPrice] = useState<number>(0);
   const [installments, setInstallments] = useState<InstallmentOption[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const creditService = useRef(new CreditAgreementService(apiBaseUrl));
   const eventsService = useRef(new EventsService(apiBaseUrl));
   const observerRef = useRef<MutationObserver | null>(null);
@@ -42,7 +44,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
   const fetchInstallments = useCallback(async (priceInCents: number) => {
     if (priceInCents <= 0) {
       console.warn('⚠️ Invalid price for fetching installments:', priceInCents);
-      const error = new Error('Precio inválido para calcular las cuotas');
+      const error = new Error(t('widget.invalidPrice'));
       setError(error.message);
       onError?.(error);
       trackEvent('widgetError', { error: error.message });
@@ -64,22 +66,22 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
       trackEvent('widgetLoaded', { price: priceInCents });
     } catch (err) {
       const error = err as Error;
-      setError('No se pudieron cargar las opciones de financiación');
+      setError(t('widget.loadError'));
       onError?.(error);
       trackEvent('widgetError', { error: error.message });
     } finally {
       setIsLoading(false);
     }
-  }, [onLoad, onError, trackEvent]);
+  }, [onLoad, onError, trackEvent, t]);
 
   const parsePriceFromElement = useCallback((element: Element): number => {
     const text = element.textContent || '';
     const cleanText = text.replace(/[€$\s]/g, '').replace(',', '.');
     const priceValue = parseFloat(cleanText);
-    
+
     if (isNaN(priceValue) || priceValue <= 0) {
       console.warn('⚠️ Invalid price:', priceValue);
-      const error = new Error('Precio inválido para calcular las cuotas');
+      const error = new Error(t('widget.invalidPrice'));
       setError(error.message);
       setIsLoading(false);
       onError?.(error);
@@ -87,7 +89,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
       return 0;
     }
     return Math.round(priceValue * 100);
-  }, []);
+  }, [t, onError, trackEvent]);
 
   useEffect(() => {
     if (!priceSelector) {
@@ -166,7 +168,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
             <AlertCircle size={20} />
           </ErrorIcon>
           <div>
-            <ErrorTitle>Error</ErrorTitle>
+            <ErrorTitle>{t('widget.errorTitle')}</ErrorTitle>
             <ErrorMessage>{error}</ErrorMessage>
           </div>
         </ErrorContent>
@@ -185,18 +187,18 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
       <WidgetContainer>
         <WidgetHeader>
           <HeaderRow>
-            <WidgetTitle>Págalo en</WidgetTitle>
+            <WidgetTitle>{t('widget.title')}</WidgetTitle>
             <MoreInfoButton onClick={handleOpenModal}>
               <Info size={16} />
-              Más info
+              {t('widget.moreInfo')}
             </MoreInfoButton>
           </HeaderRow>
-          <WidgetSubtitle>Fracciona tu pago</WidgetSubtitle>
+          <WidgetSubtitle>{t('widget.subtitle')}</WidgetSubtitle>
         </WidgetHeader>
 
         <SelectContainer>
           <SelectLabel htmlFor="sequra-installment-select">
-            Selecciona el número de cuotas
+            {t('widget.selectInstallments')}
           </SelectLabel>
           <SelectWrapper>
             <StyledSelect
@@ -206,7 +208,7 @@ const InstallmentWidget: React.FC<InstallmentWidgetProps> = ({
             >
               {installments.map((option, index) => (
                 <option key={option.instalment_count} value={index}>
-                  {option.instalment_count} cuotas de {option.instalment_total.string}
+                  {option.instalment_count} {t('widget.installmentsOf')} {option.instalment_total.string}
                 </option>
               ))}
             </StyledSelect>

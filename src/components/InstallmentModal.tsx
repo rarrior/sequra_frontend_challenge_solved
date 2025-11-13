@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 
 import { 
@@ -12,13 +12,15 @@ import type { InstallmentModalProps } from '../types';
 
 
 export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onClose, selectedOption }) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -40,19 +42,19 @@ export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onCl
   return (
     <ModalOverlay role="dialog" onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
-        <CloseButton onClick={onClose} aria-label="Cerrar">
+        <CloseButton onClick={onClose} aria-label={t('modal.close')}>
           <X size={24} />
         </CloseButton>
 
         <ModalHeader>
           <BrandName>seQura</BrandName>
-          <ModalTitle>Fracciona tu pago</ModalTitle>
+          <ModalTitle>{t('modal.title')}</ModalTitle>
         </ModalHeader>
 
         <ModalBody>
           <InfoCard $variant="blue">
             <InfoCardTitle $variant="blue">
-              ✓ Fracciona tu pago solo con un coste fijo por cuota
+              {t('modal.benefit1')}
             </InfoCardTitle>
             <InfoCardText $variant="blue">
               <strong>{selectedOption.instalment_fee.string}</strong>
@@ -61,7 +63,7 @@ export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onCl
 
           <InfoCard $variant="green">
             <InfoCardTitle $variant="green">
-              ✓ Ahora solo pagas la primera cuota
+              {t('modal.benefit2')}
             </InfoCardTitle>
             <InfoCardText $variant="green">
               <strong>{selectedOption.instalment_total.string}</strong>
@@ -70,7 +72,7 @@ export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onCl
 
           <InfoCard $variant="purple">
             <InfoCardTitle $variant="purple">
-              ✓ El resto de pagos se cargarán automáticamente a tu tarjeta
+              {t('modal.benefit3')}
             </InfoCardTitle>
             <InfoCardText $variant="purple">
               <strong>{selectedOption.instalment_total.string}</strong>
@@ -79,12 +81,12 @@ export const InstallmentModal: React.FC<InstallmentModalProps> = ({ isOpen, onCl
 
           <DisclaimerBox>
             <DisclaimerText>
-              Además en el importe mostrado ya se incluye la cuota única mensual de {selectedOption.instalment_fee.string}, por lo que no tendrás ninguna sorpresa.
+              {t('modal.disclaimer', { fee: selectedOption.instalment_fee.string })}
             </DisclaimerText>
           </DisclaimerBox>
         </ModalBody>
 
-        <ModalButton onClick={onClose}>Entendido</ModalButton>
+        <ModalButton onClick={onClose}>{t('modal.understood')}</ModalButton>
       </ModalContent>
     </ModalOverlay>
   );

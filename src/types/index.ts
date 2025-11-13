@@ -8,6 +8,7 @@ export interface InstallmentWidgetProps {
   priceSelector?: string;
   onLoad?: () => void;
   onError?: (error: Error) => void;
+  language?: string;
 }
 
 export interface WidgetConfig extends InstallmentWidgetProps {

@@ -1,0 +1,21 @@
+{
+  "widget": {
+    "title": "Pay in",
+    "moreInfo": "More info",
+    "subtitle": "Split your payment",
+    "selectInstallments": "Select the number of installments",
+    "installmentsOf": "installments of",
+    "invalidPrice": "Invalid price to calculate installments",
+    "loadError": "Could not load financing options",
+    "errorTitle": "Error"
+  },
+  "modal": {
+    "close": "Close",
+    "title": "Split your payment",
+    "benefit1": "✓ Split your payment with just a fixed cost per installment",
+    "benefit2": "✓ Now you only pay the first installment",
+    "benefit3": "✓ The remaining payments will be automatically charged to your card",
+    "disclaimer": "Additionally, the amount shown already includes the single monthly fee of {{fee}}, so there won't be any surprises.",
+    "understood": "Got it"
+  }
+}

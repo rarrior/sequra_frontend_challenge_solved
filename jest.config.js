@@ -21,6 +21,9 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-i18next|i18next)/)',
+  ],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
