@@ -142,7 +142,7 @@ export const TwelveMonths: Story = {
 
 export const HighPrice: Story = {
   args: {
-    isOpen: false,
+    isOpen: true,
     selectedOption: mockHighPriceInstallment,
   },
   parameters: {

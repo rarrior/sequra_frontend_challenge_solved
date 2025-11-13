@@ -1,6 +1,7 @@
+import React, { useEffect } from 'react';
 import type { Preview } from '@storybook/react';
-
 import { initialize, mswLoader } from 'msw-storybook-addon';
+import i18n from '../src/i18n/config';
 
 initialize();
 
@@ -39,6 +40,31 @@ const preview: Preview = {
     },
   },
   loaders: [mswLoader], // 👈 Add the MSW loader to all stories
+  globalTypes: {
+    locale: {
+      name: 'Language',
+      description: 'Internationalization locale',
+      defaultValue: 'es',
+      toolbar: {
+        icon: 'globe',
+        items: [
+          { value: 'es', title: 'Español', right: '🇪🇸' },
+          { value: 'en', title: 'English', right: '🇬🇧' },
+        ],
+        showName: true,
+        dynamicTitle: true,
+      },
+    },
+  },
+  decorators: [
+    (Story, context) => {
+      const { locale } = context.globals;
+      useEffect(() => {
+        i18n.changeLanguage(locale);
+      }, [locale]);
+      return <Story />;
+    },
+  ],
 };
 
 export default preview;

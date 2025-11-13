@@ -54,7 +54,7 @@ const meta: Meta<typeof InstallmentWidget> = {
           <div style={{ marginBottom: '10px', padding: '15px', background: '#eef6ffff', borderRadius: '8px', 
             fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
             <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px', display: 'flex', gap: '10px' }}>
-              <div style={{ flex: '1 0 auto' }}>Precio:</div> 
+              <div style={{ flex: '1 0 auto' }}>Price:</div> 
               <div id="demo-price" style={{ color: '#00306fff'}}>{(price || price ===0) && !isNaN(price) ? (price / 100).toFixed(2).replace('.', ',') + ' €' : price}</div>
             </div>
           </div>
